@@ -58,11 +58,15 @@ def save_authentication_info(response, tenant):
     parsed_url = urlparse(response.json()['api_domain'])
     subdomain = parsed_url.netloc.split('.')[0]
 
-    PipedriveIntegration.objects.create(
-            tenant=tenant,
-            is_authenticated=True,
-            pipedrive_domain=subdomain,
-            scopes = response.json()['scope'],
-        )
-    print("Saved authentication info")
-    
+    # Save if that tenant doesn't already exist
+    if not PipedriveIntegration.objects.filter(tenant=tenant).exists():
+
+        new_pipedrive_integration = PipedriveIntegration(
+                tenant=tenant,
+                is_authenticated=True,
+                pipedrive_domain=subdomain,
+                scopes = response.json()['scope'],
+            )
+        new_pipedrive_integration.save()
+        print("Saved authentication info")
+        

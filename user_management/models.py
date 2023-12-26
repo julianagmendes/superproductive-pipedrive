@@ -1,5 +1,6 @@
 from django.db import models
 from django_tenants.models import TenantMixin, DomainMixin
+from django.contrib.auth.models import AbstractUser
 
 class Company(TenantMixin):
     INDUSTRY_CHOICES = [
@@ -87,10 +88,11 @@ class Company(TenantMixin):
 class Domain(DomainMixin):
     pass
 
+class CustomUser(AbstractUser):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
 
-
-# from django.db import models
-# from django.contrib.auth.models import User
+    def __str__(self):
+        return self.username
 
 # class SubscriptionPlan(models.Model):
 #     name = models.CharField(max_length=100)

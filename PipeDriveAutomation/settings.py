@@ -20,6 +20,7 @@ if ENVIRONMENT == 'local':
 
     DEBUG = os.getenv('DEBUG')
     SECRET_KEY = os.getenv('SECRET_KEY')
+    FIELD_ENCRYPTION_KEY = os.getenv('FIELD_ENCRYPTION_KEY')
 
 else:
     DEBUG = False
@@ -32,6 +33,7 @@ ALLOWED_HOSTS = ['*']
 SHARED_APPS = [
     'django_tenants',  # mandatory
     'user_management',
+    'encrypted_model_fields',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -46,7 +48,6 @@ TENANT_APPS = [
 ]
 
 INSTALLED_APPS = list(set(SHARED_APPS + TENANT_APPS))
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -107,6 +108,10 @@ DATABASE_ROUTERS = (
 TENANT_MODEL = "user_management.Company"
 
 TENANT_DOMAIN_MODEL = "user_management.Domain"
+
+AUTH_USER_MODEL = 'user_management.CustomUser'
+
+LOG_ENTRY_MODEL = 'user_management.CustomUser'
 
 
 # Password validation
