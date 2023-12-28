@@ -80,7 +80,6 @@ class Company(TenantMixin):
         default='sharepoint',
     )
 
-
     def __str__(self):
         return self.name
 
@@ -104,7 +103,8 @@ class CustomUser(AbstractUser):
 #         ('communication', 'Communication'),
 #         ('program_management', 'Program Management'),
 #         ('e_sign', 'E-Sign'),
-#         ('main_automation_ui', 'Main Automation UI'),
+#         ('file_storage', 'File Storage'),
+
 #     ]
 
 #     name = models.CharField(max_length=100)

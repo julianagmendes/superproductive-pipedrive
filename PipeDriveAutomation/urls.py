@@ -19,6 +19,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('pipedrive/', include('apps.pipedrive.urls'))
+    path('pipedrive/', include('apps.pipedrive.urls')),
+    path('core/', include('apps.core.urls'))
 
 ]

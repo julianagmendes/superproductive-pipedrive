@@ -45,6 +45,8 @@ SHARED_APPS = [
 
 TENANT_APPS = [
     'apps.pipedrive',
+    'apps.core',
+    'apps.integrations'
 ]
 
 INSTALLED_APPS = list(set(SHARED_APPS + TENANT_APPS))
@@ -104,6 +106,8 @@ else:
 DATABASE_ROUTERS = (
     'django_tenants.routers.TenantSyncRouter',
 )
+
+TENANT_DB_ALIAS = 'default'
 
 TENANT_MODEL = "user_management.Company"
 
