@@ -1,7 +1,7 @@
 from pathlib import Path
 import os
 from dotenv import load_dotenv
-
+from .utils import get_secret_dict
 load_dotenv()
 
 ENVIRONMENT = 'local'
@@ -15,19 +15,21 @@ CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = "Lax"
 # CORS_ORIGIN_ALLOW_ALL = True
-# SECURITY WARNING: don't run with debug turned on in production!
+
+
 if ENVIRONMENT == 'local':
 
     DEBUG = os.getenv('DEBUG')
     SECRET_KEY = os.getenv('SECRET_KEY')
     FIELD_ENCRYPTION_KEY = os.getenv('FIELD_ENCRYPTION_KEY')
+    ALLOWED_HOSTS = ['*']
 
 else:
-    DEBUG = False
-
-    #TODO: Add production settings to get parameters from Parameter store
-
-ALLOWED_HOSTS = ['*']
+    django_secrets = get_secret_dict('django_secrets')
+    DEBUG = django_secrets['DEBUG']
+    SECRET_KEY = django_secrets['SECRET_KEY']
+    FIELD_ENCRYPTION_KEY = django_secrets['FIELD_ENCRYPTION_KEY']
+    ALLOWED_HOSTS = django_secrets['ALLOWED_HOSTS']
 
 
 SHARED_APPS = [
@@ -103,8 +105,18 @@ if ENVIRONMENT == 'local':
     }
 
 else:
-    pass
-    #TODO: Add production settings to get parameters from Parameter store
+    secret_db_name = f"superproductive/superfunnel/dev/db/masteruser"
+    db_secrets = get_secret_dict(secret_db_name)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django_tenants.postgresql_backend',
+            'NAME': db_secrets['DB_NAME'],
+            'USER': db_secrets['DB_USER'],
+            'PASSWORD': db_secrets['DB_PASSWORD'],
+            'HOST': db_secrets['DB_HOST'],
+            'PORT': '5432',
+        }
+    }
 
 DATABASE_ROUTERS = (
     'django_tenants.routers.TenantSyncRouter',
@@ -188,9 +200,19 @@ if ENVIRONMENT == 'local':
     CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
 
 else:
-    pass
+    pipedrive_secrets = get_secret_dict('pipedrive_secrets')
+    PIPEDRIVE_OAUTH_SETTINGS = {
+        'client_id': pipedrive_secrets['PIPEDRIVE_CLIENT_ID'],
+        'client_secret': pipedrive_secrets['PIPEDRIVE_CLIENT_SECRET'],
+        'redirect_uri': pipedrive_secrets['PIPEDRIVE_REDIRECT_URI'],  
+        'authorization_url': 'https://oauth.pipedrive.com/oauth/authorize',
+        'token_url': 'https://oauth.pipedrive.com/oauth/token',
+    }
 
-    #TODO: Add production settings to get parameters from Parameter store
+    EC2_SECRETS = get_secret_dict('ec2_secrets')
+    CELERY_BROKER_URL = f"redis://{EC2_SECRETS['HOST_NAME']}:6379/0"
+    CELERY_RESULT_BACKEND = f"redis://{EC2_SECRETS['HOST_NAME']}:6379/0"
+
 
 # Celery Configuration Options
 CELERY_TIMEZONE = 'America/New_York'
