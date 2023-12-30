@@ -5,7 +5,7 @@ import boto3
 from botocore.exceptions import ClientError
 
 def get_secret_dict(secret_name):
-    region_name = "us-east-1"
+    region_name = "us-east-2"
     # Create a Secrets Manager client
     session = boto3.session.Session()
     client = session.client(
@@ -14,7 +14,7 @@ def get_secret_dict(secret_name):
     )
     try:
         get_secret_value_response = client.get_secret_value(
-            SecretId=secret_name
+            SecretId=f"superproductive/superfunnel/{secret_name}"
         )
     except ClientError as e:
         raise e
