@@ -18,6 +18,7 @@ def authorize_view(request, tenant):
     return redirect(authorization_url)
 
 def callback_view(request):
+    print(f"callback_view: {request.GET.get('state')}, {request.session.get('oauth_state')}")
     if request.GET.get('state') != request.session.get('oauth_state'):
         return HttpResponseForbidden("Invalid 'state' parameter")
 

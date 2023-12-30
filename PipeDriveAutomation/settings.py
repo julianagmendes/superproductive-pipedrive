@@ -20,7 +20,7 @@ if ENVIRONMENT == 'local':
 
     DEBUG = os.getenv('DEBUG')
     SECRET_KEY = os.getenv('SECRET_KEY')
-    FIELD_ENCRYPTION_KEY = 'u15DQDG0wd6tQBrhGiimvk1YFUxqPrk_ufwXIoeA6lg='
+    FIELD_ENCRYPTION_KEY = os.getenv('FIELD_ENCRYPTION_KEY')
 
 else:
     DEBUG = False
@@ -116,9 +116,9 @@ TENANT_MODEL = "user_management.Company"
 
 TENANT_DOMAIN_MODEL = "user_management.Domain"
 
-AUTH_USER_MODEL = 'user_management.CustomUser'
+# AUTH_USER_MODEL = 'user_management.CustomUser'
 
-LOG_ENTRY_MODEL = 'user_management.CustomUser'
+# LOG_ENTRY_MODEL = 'user_management.CustomUser'
 
 
 # Password validation
@@ -166,8 +166,7 @@ if ENVIRONMENT == 'local':
     PIPEDRIVE_OAUTH_SETTINGS = {
         'client_id': os.getenv('PIPEDRIVE_CLIENT_ID'),
         'client_secret': os.getenv('PIPEDRIVE_CLIENT_SECRET'),
-        # 'redirect_uri': os.getenv('PIPEDRIVE_REDIRECT_URI'),  
-        'redirect_uri': 'https://0933-98-24-161-221.ngrok-free.app/core/callback/',  # TODO: Change this to the actual redirect URI
+        'redirect_uri': os.getenv('PIPEDRIVE_REDIRECT_URI'),  
         'authorization_url': 'https://oauth.pipedrive.com/oauth/authorize',
         'token_url': 'https://oauth.pipedrive.com/oauth/token',
     }

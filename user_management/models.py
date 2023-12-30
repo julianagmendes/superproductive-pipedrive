@@ -87,11 +87,11 @@ class Company(TenantMixin):
 class Domain(DomainMixin):
     pass
 
-class CustomUser(AbstractUser):
-    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+# class CustomUser(AbstractUser):
+#     company = models.ForeignKey(Company, on_delete=models.CASCADE)
 
-    def __str__(self):
-        return self.username
+#     def __str__(self):
+#         return self.username
 
 # class SubscriptionPlan(models.Model):
 #     name = models.CharField(max_length=100)
