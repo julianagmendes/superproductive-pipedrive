@@ -14,13 +14,13 @@ SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = "Lax"
-
+# CORS_ORIGIN_ALLOW_ALL = True
 # SECURITY WARNING: don't run with debug turned on in production!
 if ENVIRONMENT == 'local':
 
     DEBUG = os.getenv('DEBUG')
     SECRET_KEY = os.getenv('SECRET_KEY')
-    FIELD_ENCRYPTION_KEY = os.getenv('FIELD_ENCRYPTION_KEY')
+    FIELD_ENCRYPTION_KEY = 'u15DQDG0wd6tQBrhGiimvk1YFUxqPrk_ufwXIoeA6lg='
 
 else:
     DEBUG = False
@@ -32,7 +32,9 @@ ALLOWED_HOSTS = ['*']
 
 SHARED_APPS = [
     'django_tenants',  # mandatory
+    'corsheaders',
     'user_management',
+    'django_celery_results',
     'encrypted_model_fields',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -52,6 +54,7 @@ TENANT_APPS = [
 INSTALLED_APPS = list(set(SHARED_APPS + TENANT_APPS))
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'PipeDriveAutomation.middleware.TenantMiddleware.CustomTenantMainMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -142,8 +145,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
-
 USE_I18N = True
 
 USE_TZ = True
@@ -165,12 +166,34 @@ if ENVIRONMENT == 'local':
     PIPEDRIVE_OAUTH_SETTINGS = {
         'client_id': os.getenv('PIPEDRIVE_CLIENT_ID'),
         'client_secret': os.getenv('PIPEDRIVE_CLIENT_SECRET'),
-        'redirect_uri': os.getenv('PIPEDRIVE_REDIRECT_URI'),  
+        # 'redirect_uri': os.getenv('PIPEDRIVE_REDIRECT_URI'),  
+        'redirect_uri': 'https://0933-98-24-161-221.ngrok-free.app/core/callback/',  # TODO: Change this to the actual redirect URI
         'authorization_url': 'https://oauth.pipedrive.com/oauth/authorize',
         'token_url': 'https://oauth.pipedrive.com/oauth/token',
     }
+
+    ASANA_OAUTH_SETTINGS = {
+        'client_id': os.getenv('ASANA_CLIENT_ID'),
+        'client_secret': os.getenv('ASANA_CLIENT_SECRET'),
+        'redirect_uri': os.getenv('ASANA_REDIRECT_URI'),
+        'authorization_url': 'https://app.asana.com/-/oauth_authorize',
+        'token_url': 'https://app.asana.com/-/oauth_token',
+    }
+
+    # CORS_ALLOWED_ORIGINS = [
+    #             "https://0933-98-24-161-221.ngrok-free.app"
+    #         ]
+    # CSRF_TRUSTED_ORIGINS = ["https://0933-98-24-161-221.ngrok-free.app"]
+
+    CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
+    CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
 
 else:
     pass
 
     #TODO: Add production settings to get parameters from Parameter store
+
+# Celery Configuration Options
+CELERY_TIMEZONE = 'America/New_York'
+CELERY_TASK_TIME_LIMIT = 30 * 60
+TIME_ZONE = 'America/New_York'

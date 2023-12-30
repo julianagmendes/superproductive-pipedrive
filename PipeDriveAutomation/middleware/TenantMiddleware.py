@@ -10,13 +10,14 @@ class CustomTenantMainMiddleware(TenantMainMiddleware):
         return tenant_identifier
 
     def process_request(self, request):
-        tenant_identifier = self.hostname_from_request(request)
 
         print(request.path)
         is_callback_request = request.path.endswith('/callback/')
+        is_signup_request = request.path.endswith('/signup/')
 
-        if not is_callback_request:
+        if not is_callback_request and not is_signup_request and not request.path.endswith('/favicon.ico'):
             try:
+                tenant_identifier = self.hostname_from_request(request)
                 tenant = get_tenant_model().objects.get(schema_name=tenant_identifier)
                 print(f"tenant: {tenant}")
                 connection.set_tenant(tenant)  # Set the current tenant for the database connection
@@ -27,7 +28,9 @@ class CustomTenantMainMiddleware(TenantMainMiddleware):
             except get_tenant_model().DoesNotExist:
                 return HttpResponseForbidden("Invalid tenant identifier")
 
+        print(f"Db tenant3: {connection.tenant}")
 
+# from django_tenants.middleware.main import TenantMainMiddleware  
 
 # from django.core.exceptions import DisallowedHost
 # from django.db import connection

@@ -1,7 +1,8 @@
 from django import forms
-from user_management.models import YourModel
+from user_management.models import Company
 
-class YourModelForm(forms.ModelForm):
+class SignUpForm(forms.ModelForm):
     class Meta:
-        model = YourModel
-        fields = '__all__'
+        model = Company
+        exclude = ['schema_name', 'is_active']
+
