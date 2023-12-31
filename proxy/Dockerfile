@@ -33,4 +33,4 @@ VOLUME /vol/static
 WORKDIR /app
 
 # Start Nginx and Gunicorn
-CMD ["/proxy/run.sh"]
+CMD ["./run.sh"]
