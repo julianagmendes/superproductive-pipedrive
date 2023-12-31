@@ -21,7 +21,7 @@ RUN mkdir -p /vol/static && \
 # Create log directory and set permissions
 RUN mkdir -p /var/log/gunicorn && \
     chown nginx:nginx /var/log/gunicorn && \
-    chmod 755 /var/log/gunicorn
+    sudo chmod 666 /var/log/gunicorn.log
 
 # Install Python3 and Gunicorn
 RUN apk add --no-cache python3 py3-pip && \
