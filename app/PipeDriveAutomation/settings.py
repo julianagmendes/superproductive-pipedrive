@@ -29,7 +29,8 @@ else:
     DEBUG = django_secrets['DEBUG']
     SECRET_KEY = django_secrets['SECRET_KEY']
     FIELD_ENCRYPTION_KEY = django_secrets['FIELD_ENCRYPTION_KEY']
-    ALLOWED_HOSTS = django_secrets['ALLOWED_HOSTS']
+    ALLOWED_HOSTS = []
+    ALLOWED_HOSTS.extend([host.strip() for host in django_secrets['ALLOWED_HOSTS'].split(',')])
 
 
 SHARED_APPS = [
