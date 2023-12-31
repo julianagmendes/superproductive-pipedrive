@@ -17,7 +17,7 @@ SESSION_COOKIE_SAMESITE = "Lax"
 # CORS_ORIGIN_ALLOW_ALL = True
 
 
-if ENVIRONMENT == '':
+if ENVIRONMENT == 'local':
 
     DEBUG = os.getenv('DEBUG')
     SECRET_KEY = os.getenv('SECRET_KEY')
@@ -25,7 +25,7 @@ if ENVIRONMENT == '':
     ALLOWED_HOSTS = ['*']
 
 else:
-    django_secrets = get_secret_dict('django_secrets')
+    django_secrets = get_secret_dict(f'{ENVIRONMENT}/django_secrets')
     DEBUG = django_secrets['DEBUG']
     SECRET_KEY = django_secrets['SECRET_KEY']
     FIELD_ENCRYPTION_KEY = django_secrets['FIELD_ENCRYPTION_KEY']
@@ -105,7 +105,7 @@ if ENVIRONMENT == 'local':
     }
 
 else:
-    secret_db_name = f"superproductive/superfunnel/dev/db/masteruser"
+    secret_db_name = f'{ENVIRONMENT}/db/masteruser'
     db_secrets = get_secret_dict(secret_db_name)
     DATABASES = {
         'default': {
@@ -200,7 +200,7 @@ if ENVIRONMENT == 'local':
     CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
 
 else:
-    pipedrive_secrets = get_secret_dict('pipedrive_secrets')
+    pipedrive_secrets = get_secret_dict(f'{ENVIRONMENT}/pipedrive_secrets')
     PIPEDRIVE_OAUTH_SETTINGS = {
         'client_id': pipedrive_secrets['PIPEDRIVE_CLIENT_ID'],
         'client_secret': pipedrive_secrets['PIPEDRIVE_CLIENT_SECRET'],
@@ -209,7 +209,7 @@ else:
         'token_url': 'https://oauth.pipedrive.com/oauth/token',
     }
 
-    EC2_SECRETS = get_secret_dict('ec2_secrets')
+    EC2_SECRETS = get_secret_dict(f'{ENVIRONMENT}/celery_secrets')
     CELERY_BROKER_URL = f"redis://{EC2_SECRETS['HOST_NAME']}:6379/0"
     CELERY_RESULT_BACKEND = f"redis://{EC2_SECRETS['HOST_NAME']}:6379/0"
 
