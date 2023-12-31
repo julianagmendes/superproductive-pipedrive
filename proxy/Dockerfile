@@ -28,6 +28,8 @@ USER nginx
 # Expose the static volume
 VOLUME /vol/static
 
+WORKDIR /app
+
 # Start Nginx and Gunicorn
 CMD ["sh", "-c", \
     "envsubst < /etc/nginx/default.conf.tpl > /etc/nginx/conf.d/default.conf && \
