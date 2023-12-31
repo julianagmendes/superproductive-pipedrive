@@ -30,7 +30,5 @@ USER nginx
 # Expose the static volume
 VOLUME /vol/static
 
-WORKDIR /app
-
 # Start Nginx and Gunicorn
-CMD ["./run.sh"]
+CMD ["/run.sh"]
