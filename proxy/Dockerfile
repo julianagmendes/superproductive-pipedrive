@@ -3,7 +3,7 @@ FROM nginxinc/nginx-unprivileged:1-alpine
 
 # Copy Nginx configuration template
 COPY ./default.conf.tpl /etc/nginx/default.conf.tpl
-COPY ./run.sh /run.sh
+COPY app/run.sh /run.sh
 
 # Set environment variables
 ENV LISTEN_PORT=8000
