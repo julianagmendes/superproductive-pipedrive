@@ -18,6 +18,10 @@ RUN mkdir -p /vol/static && \
     touch /etc/nginx/conf.d/default.conf && \
     chown nginx:nginx /etc/nginx/conf.d/default.conf
 
+# Create log directory and set permissions
+RUN mkdir -p /var/log/gunicorn && \
+    chown nginx:nginx /var/log/gunicorn
+
 # Install Python3 and Gunicorn
 RUN apk add --no-cache python3 py3-pip && \
     pip3 install gunicorn
@@ -31,5 +35,7 @@ VOLUME /vol/static
 # Start Nginx and Gunicorn
 CMD ["sh", "-c", \
     "envsubst < /etc/nginx/default.conf.tpl > /etc/nginx/conf.d/default.conf && \
+    touch /var/log/gunicorn.log && \
+    chown nginx:nginx /var/log/gunicorn.log && \
     gunicorn PipeDriveAutomation.wsgi:application -b 0.0.0.0:${APP_PORT} --pythonpath /app 2>&1 | tee /var/log/gunicorn.log & \
     nginx -g 'daemon off;'"]
