@@ -20,6 +20,9 @@ RUN mkdir -p /vol/static && \
     chown nginx:nginx /etc/nginx/conf.d/default.conf && \
     chmod +x /run.sh
 
+RUN apk add --no-cache python && \
+    pip install gunicorn
+
 # Switch back to the nginx user
 USER nginx
 
