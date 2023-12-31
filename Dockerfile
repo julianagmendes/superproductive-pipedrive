@@ -1,34 +1,29 @@
-# Use the official Nginx image as a base
-FROM nginxinc/nginx-unprivileged:1-alpine
+FROM python:3.11-alpine
 
-# Copy Nginx configuration template
-COPY ./default.conf.tpl /etc/nginx/default.conf.tpl
-COPY ./run.sh /run.sh
+ENV PYTHONUNBUFFERED 1
 
-# Set environment variables
-ENV LISTEN_PORT=8000
-ENV APP_HOST=app
-ENV APP_PORT=9000
+COPY ./requirements.txt /tmp/requirements.txt
+COPY ./app /app
+WORKDIR /app
+EXPOSE 8000
 
-# Switch to root user temporarily to perform setup
-USER root
+RUN python -m venv /py && \
+    apk add --update --no-cache postgresql-client jpeg-dev && \
+    apk add --update --no-cache --virtual .tmp-build-deps \
+        build-base postgresql-dev musl-dev zlib zlib-dev linux-headers && \
+    /py/bin/pip install -r /tmp/requirements.txt && \
+    rm -rf /tmp && \
+    apk del .tmp-build-deps && \
+    adduser \
+        --disabled-password \
+        --no-create-home \
+        django-user && \
+    mkdir -p /vol/web/media && \
+    mkdir -p /vol/web/static && \
+    chown -R django-user:django-user /vol && \
+    chmod -R 755 /vol 
 
-# Create directory for static files and set permissions
-RUN mkdir -p /vol/static && \
-    chmod 755 /vol/static && \
-    touch /etc/nginx/conf.d/default.conf && \
-    chown nginx:nginx /etc/nginx/conf.d/default.conf && \
-    chmod +x /run.sh
+ENV PATH="/scripts:/py/bin:$PATH"
 
-# Install Python3 and Gunicorn
-RUN apk add --no-cache python3 py3-pip && \
-    pip3 install gunicorn
+USER django-user
 
-# Switch back to the nginx user
-USER nginx
-
-# Expose the static volume
-VOLUME /vol/static
-
-# Start Nginx and Gunicorn
-CMD ["./run.sh"]

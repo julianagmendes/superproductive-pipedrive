@@ -21,7 +21,7 @@ RUN mkdir -p /vol/static && \
     chmod +x /run.sh
 
 # Install Python3 and Gunicorn
-RUN apk add --no-cache python3 && \
+RUN apk add --no-cache python3 py3-pip && \
     pip3 install gunicorn
 
 # Switch back to the nginx user
