@@ -25,7 +25,7 @@ WORKDIR /app
 
 # Install Gunicorn and copy your Django app code
 RUN pip install gunicorn
-COPY ./app /app/PipeDriveAutomation
+COPY ./app /app
 
 # Switch back to the nginx user
 USER nginx
