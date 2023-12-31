@@ -2,7 +2,6 @@
 FROM nginxinc/nginx-unprivileged:1-alpine
 
 # Copy Nginx configuration template
-COPY ./app /app
 COPY ./default.conf.tpl /etc/nginx/default.conf.tpl
 COPY ./run.sh /run.sh
 
@@ -31,5 +30,7 @@ USER nginx
 # Expose the static volume
 VOLUME /vol/static
 
+WORKDIR /app
+
 # Start Nginx and Gunicorn
-CMD ["./run.sh"]
+CMD ["/proxy/run.sh"]
