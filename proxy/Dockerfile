@@ -31,5 +31,5 @@ VOLUME /vol/static
 # Start Nginx and Gunicorn
 CMD ["sh", "-c", \
     "envsubst < /etc/nginx/default.conf.tpl > /etc/nginx/conf.d/default.conf && \
-    gunicorn app.PipeDriveAutomation.wsgi:application -b 0.0.0.0:${APP_PORT} --pythonpath /app/PipeDriveAutomation 2>&1 | tee /var/log/gunicorn.log & \
+    gunicorn PipeDriveAutomation.wsgi:application -b 0.0.0.0:${APP_PORT} --pythonpath /app 2>&1 | tee /var/log/gunicorn.log & \
     nginx -g 'daemon off;'"]
