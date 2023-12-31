@@ -3,7 +3,6 @@ FROM nginxinc/nginx-unprivileged:1-alpine
 
 # Copy Nginx configuration template
 COPY ./default.conf.tpl /etc/nginx/default.conf.tpl
-COPY ./run.sh /run.sh
 
 # Set environment variables
 ENV LISTEN_PORT=8000
@@ -17,8 +16,7 @@ USER root
 RUN mkdir -p /vol/static && \
     chmod 755 /vol/static && \
     touch /etc/nginx/conf.d/default.conf && \
-    chown nginx:nginx /etc/nginx/conf.d/default.conf && \
-    chmod +x /run.sh
+    chown nginx:nginx /etc/nginx/conf.d/default.conf
 
 # Install Python3 and Gunicorn
 RUN apk add --no-cache python3 py3-pip && \
@@ -31,4 +29,7 @@ USER nginx
 VOLUME /vol/static
 
 # Start Nginx and Gunicorn
-CMD ["/run.sh"]
+CMD ["sh", "-c", \
+    "envsubst < /etc/nginx/default.conf.tpl > /etc/nginx/conf.d/default.conf && \
+    gunicorn PipeDriveAutomation.wsgi:application -b 0.0.0.0:${APP_PORT} & \
+    nginx -g 'daemon off;'"]
