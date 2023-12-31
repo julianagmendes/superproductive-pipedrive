@@ -20,13 +20,6 @@ RUN mkdir -p /vol/static && \
     chown nginx:nginx /etc/nginx/conf.d/default.conf && \
     chmod +x /run.sh
 
-# Set up a directory for your Django app
-WORKDIR /app
-
-# Install Gunicorn and copy your Django app code
-RUN pip install gunicorn
-COPY ./app /app
-
 # Switch back to the nginx user
 USER nginx
 
@@ -34,4 +27,4 @@ USER nginx
 VOLUME /vol/static
 
 # Start Nginx and Gunicorn
-CMD ["/run.sh"]
+CMD ["./run.sh"]
