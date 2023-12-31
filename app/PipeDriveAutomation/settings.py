@@ -105,6 +105,7 @@ if ENVIRONMENT == 'local':
         }
     }
 
+
 else:
     secret_db_name = f'{ENVIRONMENT}/db/masteruser'
     db_secrets = get_secret_dict(secret_db_name)
