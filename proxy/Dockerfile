@@ -2,6 +2,7 @@
 FROM nginxinc/nginx-unprivileged:1-alpine
 
 # Copy Nginx configuration template
+COPY ./app /app
 COPY ./default.conf.tpl /etc/nginx/default.conf.tpl
 COPY ./run.sh /run.sh
 
