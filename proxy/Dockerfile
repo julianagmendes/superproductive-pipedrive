@@ -29,7 +29,7 @@ USER nginx
 VOLUME /vol/static
 
 WORKDIR /app
-
+ENV PYTHONPATH=/app:$PYTHONPATH
 # Start Nginx and Gunicorn
 CMD ["sh", "-c", \
     "envsubst < /etc/nginx/default.conf.tpl > /etc/nginx/conf.d/default.conf && \
