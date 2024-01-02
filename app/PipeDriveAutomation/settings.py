@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from .utils import get_secret_dict
 load_dotenv()
 
-ENVIRONMENT = 'local'
+ENVIRONMENT = 'dev'
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -170,7 +170,7 @@ USE_TZ = True
 STATIC_URL = '/static/static/'
 MEDIA_URL = '/static/media/'
 
-STATIS_ROOT = '/vol/web/static'
+STATIC_ROOT = '/vol/web/static'
 MEDIA_ROOT = '/vol/web/media'
 
 # Default primary key field type
