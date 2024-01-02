@@ -4,6 +4,7 @@ FROM nginxinc/nginx-unprivileged:1-alpine
 # Copy Nginx configuration template
 COPY ./default.conf.tpl /etc/nginx/default.conf.tpl
 COPY ../app /app
+COPY ./run.sh /run.sh
 
 # Set environment variables
 ENV LISTEN_PORT=8000
@@ -17,7 +18,8 @@ USER root
 RUN mkdir -p /vol/static && \
     chmod 755 /vol/static && \
     touch /etc/nginx/conf.d/default.conf && \
-    chown nginx:nginx /etc/nginx/conf.d/default.conf
+    chown nginx:nginx /etc/nginx/conf.d/default.conf && \
+    chmod +x /run.sh
 
 # Create log directory and set permissions
 RUN mkdir -p /var/log/gunicorn && \
@@ -32,13 +34,10 @@ RUN apk add --no-cache python3 py3-pip && \
 USER nginx
 
 # Set the working directory
-WORKDIR /app/PipeDriveAutomation
+WORKDIR /app
 
 # Expose the static volume
 VOLUME /vol/static
 
 # Start Nginx and Gunicorn
-CMD ["sh", "-c", \
-    "envsubst < /etc/nginx/default.conf.tpl > /etc/nginx/conf.d/default.conf && \
-    gunicorn PipeDriveAutomation.wsgi:application -b 0.0.0.0:${APP_PORT} --pythonpath /app & \
-    nginx -g 'daemon off;'"]
+CMD ["./run.sh"]
