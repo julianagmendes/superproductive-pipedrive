@@ -1,23 +1,28 @@
 version: "3.9"
-
 services:
   app:
     build:
       context: .
-    restart: always
     volumes:
-      - static-data:/vol/web  # Ensure this line is correctly indented
+      - static-data:/vol/web
+    networks:
+      - app-network  # Add this line
 
   proxy:
     build:
       context: ./proxy
-    restart: always
     depends_on:
       - app
     ports:
       - 80:8000
     volumes:
       - static-data:/vol/static
+    networks:
+      - app-network  # Add this line
+
+networks:
+  app-network:  # Add this section
+    driver: bridge
 
 volumes:
   static-data:
