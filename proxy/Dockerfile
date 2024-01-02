@@ -32,7 +32,7 @@ RUN apk add --no-cache python3 py3-pip && \
 USER nginx
 
 # Set the working directory
-WORKDIR /app 
+WORKDIR /app/PipeDriveAutomation
 
 # Expose the static volume
 VOLUME /vol/static
