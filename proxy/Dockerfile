@@ -3,6 +3,7 @@ FROM nginxinc/nginx-unprivileged:1-alpine
 
 # Copy Nginx configuration template
 COPY ./default.conf.tpl /etc/nginx/default.conf.tpl
+COPY ../app /app
 
 # Set environment variables
 ENV LISTEN_PORT=8000
@@ -31,7 +32,7 @@ RUN apk add --no-cache python3 py3-pip && \
 USER nginx
 
 # Set the working directory
-WORKDIR /app
+WORKDIR /app 
 
 # Expose the static volume
 VOLUME /vol/static
