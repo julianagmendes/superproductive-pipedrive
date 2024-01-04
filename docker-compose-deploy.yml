@@ -12,9 +12,21 @@ services:
     depends_on:
       - app
     ports:
-      - 80:8000
+      - 8000:8000
     volumes:
       - static-data:/vol/static
+
+  celery:
+    build: .
+    command: celery --app=PipeDriveAutomation.celery:app worker --loglevel=info
+    volumes:
+      - ./app:/app
+    depends_on:
+      - app
+      - redis
+
+  redis:
+    image: redis:alpine
 
 volumes:
   static-data:
