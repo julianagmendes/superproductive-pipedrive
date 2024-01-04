@@ -184,7 +184,7 @@ if ENVIRONMENT == 'local':
     PIPEDRIVE_OAUTH_SETTINGS = {
         'client_id': os.getenv('PIPEDRIVE_CLIENT_ID'),
         'client_secret': os.getenv('PIPEDRIVE_CLIENT_SECRET'),
-        'redirect_uri': os.getenv('PIPEDRIVE_REDIRECT_URI'),  
+        'redirect_uri': os.getenv('PIPEDRIVE_REDIRECT_URI'),
         'authorization_url': 'https://oauth.pipedrive.com/oauth/authorize',
         'token_url': 'https://oauth.pipedrive.com/oauth/token',
     }
@@ -200,17 +200,17 @@ if ENVIRONMENT == 'local':
     # CORS_ALLOWED_ORIGINS = [
     #             "https://0933-98-24-161-221.ngrok-free.app"
     #         ]
-    # CSRF_TRUSTED_ORIGINS = ["https://0933-98-24-161-221.ngrok-free.app"]
+    CSRF_TRUSTED_ORIGINS = ["https://7b40-2603-8000-b640-5420-a0d6-5bc1-cd3d-61f0.ngrok-free.app"]
 
-    CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
-    CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
+    CELERY_BROKER_URL = 'redis://redis:6379/0'
+    CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
 
 else:
     pipedrive_secrets = get_secret_dict(f'{ENVIRONMENT}/pipedrive_secrets')
     PIPEDRIVE_OAUTH_SETTINGS = {
         'client_id': pipedrive_secrets['PIPEDRIVE_CLIENT_ID'],
         'client_secret': pipedrive_secrets['PIPEDRIVE_CLIENT_SECRET'],
-        'redirect_uri': pipedrive_secrets['PIPEDRIVE_REDIRECT_URI'],  
+        'redirect_uri': pipedrive_secrets['PIPEDRIVE_REDIRECT_URI'],
         'authorization_url': 'https://oauth.pipedrive.com/oauth/authorize',
         'token_url': 'https://oauth.pipedrive.com/oauth/token',
     }
