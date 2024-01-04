@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from .utils import get_secret_dict
 load_dotenv()
 
-ENVIRONMENT = 'dev'
+ENVIRONMENT = 'local'
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -19,9 +19,9 @@ SESSION_COOKIE_SAMESITE = "Lax"
 
 if ENVIRONMENT == 'local':
 
-    DEBUG = os.getenv('DEBUG')
+    DEBUG = True
     SECRET_KEY = os.getenv('SECRET_KEY')
-    FIELD_ENCRYPTION_KEY = os.getenv('FIELD_ENCRYPTION_KEY')
+    FIELD_ENCRYPTION_KEY = 'u15DQDG0wd6tQBrhGiimvk1YFUxqPrk_ufwXIoeA6lg='
     ALLOWED_HOSTS = ['*']
 
 else:
