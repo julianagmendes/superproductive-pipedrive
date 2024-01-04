@@ -200,7 +200,7 @@ if ENVIRONMENT == 'local':
     # CORS_ALLOWED_ORIGINS = [
     #             "https://0933-98-24-161-221.ngrok-free.app"
     #         ]
-    # CSRF_TRUSTED_ORIGINS = ["https://0933-98-24-161-221.ngrok-free.app"]
+    CSRF_TRUSTED_ORIGINS = ["https://7b40-2603-8000-b640-5420-a0d6-5bc1-cd3d-61f0.ngrok-free.app"]
 
     CELERY_BROKER_URL = 'redis://redis:6379/0'
     CELERY_RESULT_BACKEND = 'redis://redis:6379/0'

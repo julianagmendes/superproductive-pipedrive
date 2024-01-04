@@ -22,6 +22,8 @@ services:
       - DEBUG=${DEBUG}
       - SECRET_KEY=${SECRET_KEY}
       - FIELD_ENCRYPTION_KEY=${FIELD_ENCRYPTION_KEY}
+    env_file:
+      - .env
 
   celery:
     build: .
