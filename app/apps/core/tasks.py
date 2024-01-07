@@ -3,6 +3,7 @@ from django_tenants.utils import schema_context
 from user_management.models import Company
 from django_tenants.utils import get_tenant_model
 from django.db import connection
+import requests
 
 @shared_task
 def create_tenant(company, company_type, company_size, comm_platform, pm_platform, file_platform):
@@ -10,7 +11,7 @@ def create_tenant(company, company_type, company_size, comm_platform, pm_platfor
         print('Start creating tenant')
 
         connection.set_schema_to_public()
-        
+
         tenant = Company.objects.create(
             schema_name=company,
             name=company,
@@ -27,13 +28,17 @@ def create_tenant(company, company_type, company_size, comm_platform, pm_platfor
         print(f"tenant: {tenant}")
         connection.set_tenant(tenant)  # Set the current tenant for the database connection
 
-        
+
         print('Tenant creation completed')
 
     except Exception as e:
         # Log the exception and traceback
         raise e
 
+
+@shared_task
+def hello_world_task(_=None):
+    print("Hello World from Celery Task")
 
 # from django.db import models
 # from django.contrib.auth.hashers import make_password, check_password

@@ -11,14 +11,15 @@ from django.contrib.auth import login
 from django_tenants.utils import schema_context
 from user_management.models import Company
 from django_tenants.utils import get_tenant_model
-from apps.core.tasks import create_tenant
+from apps.core.tasks import create_tenant, hello_world_task
+from celery import chain
 
 
 class SignupView(View):
     def get(self, request):
         form = SignUpForm()
         return render(request, 'core/signup.html', {'form': form})
-    
+
 
     def post(self, request, *args, **kwargs):
         form = SignUpForm(request.POST)
@@ -31,12 +32,21 @@ class SignupView(View):
             file_platform = form.cleaned_data.get('file_platform')
 
             # Call the Celery task to create the tenant asynchronously
-            create_tenant.delay(company, company_type, company_size, comm_platform, pm_platform, file_platform)
+            chain(
+                create_tenant.s(
+                    company,
+                    company_type,
+                    company_size,
+                    comm_platform,
+                    pm_platform,
+                    file_platform),
+                hello_world_task.s()
+            ).apply_async()
 
             # Continue with your view logic, e.g., redirect the user to an intermediate page
             # return render(request, 'core/signup.html', {'company': company})
             return redirect(f'authorize', tenant=company)
-    
+
         return render(request, 'core/signup.html', {'form': form})
 
 
