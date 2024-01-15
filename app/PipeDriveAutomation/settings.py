@@ -31,6 +31,8 @@ else:
     FIELD_ENCRYPTION_KEY = django_secrets['FIELD_ENCRYPTION_KEY']
     ALLOWED_HOSTS = []
     ALLOWED_HOSTS.extend([host.strip() for host in django_secrets['ALLOWED_HOSTS'].split(',')])
+    TIME_ZONE = 'Europe/Lisbon'
+
 
 
 SHARED_APPS = [
@@ -184,7 +186,7 @@ if ENVIRONMENT == 'local':
     PIPEDRIVE_OAUTH_SETTINGS = {
         'client_id': os.getenv('PIPEDRIVE_CLIENT_ID'),
         'client_secret': os.getenv('PIPEDRIVE_CLIENT_SECRET'),
-        'redirect_uri': os.getenv('PIPEDRIVE_REDIRECT_URI'),
+        'redirect_uri': 'https://5a69-81-106-44-55.ngrok-free.app/core/callback/',
         'authorization_url': 'https://oauth.pipedrive.com/oauth/authorize',
         'token_url': 'https://oauth.pipedrive.com/oauth/token',
     }
@@ -218,9 +220,11 @@ else:
     EC2_SECRETS = get_secret_dict(f'{ENVIRONMENT}/celery_secrets')
     CELERY_BROKER_URL = f"redis://{EC2_SECRETS['HOST_NAME']}:6379/0"
     CELERY_RESULT_BACKEND = f"redis://{EC2_SECRETS['HOST_NAME']}:6379/0"
+    CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP=True
+    REDIS_HOST=EC2_SECRETS['HOST_NAME']
 
 
 # Celery Configuration Options
-CELERY_TIMEZONE = 'America/New_York'
+CELERY_TIMEZONE = 'Europe/Lisbon'
 CELERY_TASK_TIME_LIMIT = 30 * 60
-TIME_ZONE = 'America/New_York'
+TIME_ZONE = 'Europe/Lisbon'
