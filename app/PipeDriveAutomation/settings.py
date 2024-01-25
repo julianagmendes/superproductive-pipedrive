@@ -31,7 +31,6 @@ else:
     FIELD_ENCRYPTION_KEY = django_secrets['FIELD_ENCRYPTION_KEY']
     ALLOWED_HOSTS = []
     ALLOWED_HOSTS.extend([host.strip() for host in django_secrets['ALLOWED_HOSTS'].split(',')])
-    TIME_ZONE = 'Europe/Lisbon'
 
 
 
@@ -186,7 +185,7 @@ if ENVIRONMENT == 'local':
     PIPEDRIVE_OAUTH_SETTINGS = {
         'client_id': os.getenv('PIPEDRIVE_CLIENT_ID'),
         'client_secret': os.getenv('PIPEDRIVE_CLIENT_SECRET'),
-        'redirect_uri': 'https://5a69-81-106-44-55.ngrok-free.app/core/callback/',
+        'redirect_uri': 'https://7b59-2001-8a0-f240-5f01-ad50-905d-181e-40bb.ngrok-free.app/core/callback/',
         'authorization_url': 'https://oauth.pipedrive.com/oauth/authorize',
         'token_url': 'https://oauth.pipedrive.com/oauth/token',
     }
@@ -202,7 +201,7 @@ if ENVIRONMENT == 'local':
     # CORS_ALLOWED_ORIGINS = [
     #             "https://0933-98-24-161-221.ngrok-free.app"
     #         ]
-    CSRF_TRUSTED_ORIGINS = ["https://7b40-2603-8000-b640-5420-a0d6-5bc1-cd3d-61f0.ngrok-free.app"]
+    CSRF_TRUSTED_ORIGINS = ["https://7b59-2001-8a0-f240-5f01-ad50-905d-181e-40bb.ngrok-free.app"]
 
     CELERY_BROKER_URL = 'redis://redis:6379/0'
     CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
@@ -225,6 +224,6 @@ else:
 
 
 # Celery Configuration Options
-CELERY_TIMEZONE = 'Europe/Lisbon'
+CELERY_TIMEZONE = 'America/New_York'
 CELERY_TASK_TIME_LIMIT = 30 * 60
-TIME_ZONE = 'Europe/Lisbon'
+TIMEZONE = 'America/New_York'

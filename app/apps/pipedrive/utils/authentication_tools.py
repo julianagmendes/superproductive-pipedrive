@@ -50,7 +50,27 @@ def save_authentication_info(response, tenant):
         print("Saved authentication info")
 
 
-
+def refresh_token(refresh_token):
+    token_url = 'https://api.pipedrive.com/oauth/token'
+    client_id = settings.PIPEDRIVE_OAUTH_SETTINGS['client_id']
+    client_secret = settings.PIPEDRIVE_OAUTH_SETTINGS['client_secret']
+    redirect_uri = settings.PIPEDRIVE_OAUTH_SETTINGS['redirect_uri']
+    
+    data = {
+        'refresh_token': refresh_token,
+        'client_id': client_id,
+        'client_secret': client_secret,
+        'redirect_uri': redirect_uri,
+        'grant_type': 'refresh_token',
+    }
+    
+    response = requests.post(token_url, data=data)
+    
+    if response.status_code == 200:
+        return response
+    else:
+        print(f"Error: {response.text}")
+        return False
 
 # '''
 # Will be used to actually authenticate, save and proccess authentication data
