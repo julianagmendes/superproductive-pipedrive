@@ -33,6 +33,27 @@ else:
     ALLOWED_HOSTS.extend([host.strip() for host in django_secrets['ALLOWED_HOSTS'].split(',')])
 
 
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'handlers': {
+            'file': {
+                'level': 'ERROR',
+                'class': 'logging.FileHandler',
+                'filename': os.path.join(BASE_DIR, 'error.log'),
+            },
+        },
+        'loggers': {
+            'django': {
+                'handlers': ['file'],
+                'level': 'ERROR',
+                'propagate': True,
+            },
+        },
+    }
+
+
+
 
 SHARED_APPS = [
     'django_tenants',  # mandatory
