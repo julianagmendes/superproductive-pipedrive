@@ -42,7 +42,7 @@ else:
             'file': {
                 'level': 'ERROR',
                 'class': 'logging.FileHandler',
-                'filename': '/vol/static/error.log',  # Update the path here
+                'filename': '/vol/web/logs/error.log',  # Update the path here
             },
         },
         'loggers': {
