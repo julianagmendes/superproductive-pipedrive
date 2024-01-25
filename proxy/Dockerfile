@@ -16,7 +16,6 @@ RUN mkdir -p /vol/static && \
     touch /etc/nginx/conf.d/default.conf && \
     chown nginx:nginx /etc/nginx/conf.d/default.conf && \
     chmod +x /run.sh && \
-    mkdir -p /vol/static && \
     touch /vol/static/error.log && \
     chown nginx:nginx /vol/static/error.log
 
