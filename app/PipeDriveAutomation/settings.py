@@ -33,6 +33,8 @@ else:
     ALLOWED_HOSTS.extend([host.strip() for host in django_secrets['ALLOWED_HOSTS'].split(',')])
 
 
+
+
     LOGGING = {
         'version': 1,
         'disable_existing_loggers': False,
@@ -40,7 +42,7 @@ else:
             'file': {
                 'level': 'ERROR',
                 'class': 'logging.FileHandler',
-                'filename': os.path.join(BASE_DIR, 'error.log'),
+                'filename': '/vol/static/error.log',  # Update the path here
             },
         },
         'loggers': {
@@ -51,6 +53,7 @@ else:
             },
         },
     }
+
 
 
 
