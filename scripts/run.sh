@@ -3,6 +3,7 @@
 
 set -e
 
+touch /vol/web/logs/error.log
 python manage.py collectstatic --noinput
 python manage.py migrate
 
