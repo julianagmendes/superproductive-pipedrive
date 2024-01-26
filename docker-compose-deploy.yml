@@ -24,9 +24,11 @@ services:
     depends_on:
       - app
       - redis
+    network_mode: "host"  # Add this line
 
   redis:
     image: redis:alpine
+    network_mode: "host"  # Add this line
 
 volumes:
   static-data:
