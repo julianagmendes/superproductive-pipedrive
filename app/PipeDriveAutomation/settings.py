@@ -35,24 +35,24 @@ else:
 
 
 
-    LOGGING = {
-        'version': 1,
-        'disable_existing_loggers': False,
-        'handlers': {
-            'file': {
-                'level': 'ERROR',
-                'class': 'logging.FileHandler',
-                'filename': '/vol/web/logs/error.log',  # Update the path here
-            },
-        },
-        'loggers': {
-            'django': {
-                'handlers': ['file'],
-                'level': 'ERROR',
-                'propagate': True,
-            },
-        },
-    }
+    # LOGGING = {
+    #     'version': 1,
+    #     'disable_existing_loggers': False,
+    #     'handlers': {
+    #         'file': {
+    #             'level': 'ERROR',
+    #             'class': 'logging.FileHandler',
+    #             'filename': '/vol/web/logs/error.log',  # Update the path here
+    #         },
+    #     },
+    #     'loggers': {
+    #         'django': {
+    #             'handlers': ['file'],
+    #             'level': 'ERROR',
+    #             'propagate': True,
+    #         },
+    #     },
+    # }
 
 
 
