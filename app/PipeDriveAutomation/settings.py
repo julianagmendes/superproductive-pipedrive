@@ -9,7 +9,7 @@ ENVIRONMENT = 'local'
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = False
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
@@ -46,30 +46,6 @@ else:
     FIELD_ENCRYPTION_KEY = django_secrets['FIELD_ENCRYPTION_KEY']
     ALLOWED_HOSTS = []
     ALLOWED_HOSTS.extend([host.strip() for host in django_secrets['ALLOWED_HOSTS'].split(',')])
-
-
-
-
-    # LOGGING = {
-    #     'version': 1,
-    #     'disable_existing_loggers': False,
-    #     'handlers': {
-    #         'file': {
-    #             'level': 'ERROR',
-    #             'class': 'logging.FileHandler',
-    #             'filename': '/vol/web/logs/error.log',  # Update the path here
-    #         },
-    #     },
-    #     'loggers': {
-    #         'django': {
-    #             'handlers': ['file'],
-    #             'level': 'ERROR',
-    #             'propagate': True,
-    #         },
-    #     },
-    # }
-
-
 
 
 
@@ -224,7 +200,7 @@ if ENVIRONMENT == 'local':
     PIPEDRIVE_OAUTH_SETTINGS = {
         'client_id': os.getenv('PIPEDRIVE_CLIENT_ID'),
         'client_secret': os.getenv('PIPEDRIVE_CLIENT_SECRET'),
-        'redirect_uri': 'https://7b59-2001-8a0-f240-5f01-ad50-905d-181e-40bb.ngrok-free.app/core/callback/',
+        'redirect_uri': 'https://42c9-2603-6081-1703-485c-c86d-93b3-2750-dac9.ngrok-free.app/core/callback/',
         'authorization_url': 'https://oauth.pipedrive.com/oauth/authorize',
         'token_url': 'https://oauth.pipedrive.com/oauth/token',
     }
@@ -240,7 +216,7 @@ if ENVIRONMENT == 'local':
     # CORS_ALLOWED_ORIGINS = [
     #             "https://0933-98-24-161-221.ngrok-free.app"
     #         ]
-    CSRF_TRUSTED_ORIGINS = ["https://7b59-2001-8a0-f240-5f01-ad50-905d-181e-40bb.ngrok-free.app"]
+    CSRF_TRUSTED_ORIGINS = ["https://42c9-2603-6081-1703-485c-c86d-93b3-2750-dac9.ngrok-free.app"]
 
     CELERY_BROKER_URL = 'redis://redis:6379/0'
     CELERY_RESULT_BACKEND = 'redis://redis:6379/0'

@@ -1,0 +1,46 @@
+<!-- FILEPATH: /c:/Users/j_men/Documents/Boa Codes/superproductive-pipedrive/app/apps/core/templates/core/authentication_platforms.html -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SuperFunnel CRM - App Authentication</title>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Authenticate Apps for SuperFunnel CRM</h1>
+        <a href="{% url 'authorize_pipedrive' tenant=tenant %}" class="button">Pipedrive</a>
+        <a href="{% url 'authorize_calendly' tenant=tenant %}" class="button">Calendly</a>
+    </div>
+</body>
+</html>

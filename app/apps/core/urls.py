@@ -1,12 +1,12 @@
 from django.urls import path
-from .views import SignupView, authorize_view, callback_view, oauth_success, oauth_error
+from .views import SignupView, authorize_view_calendly, authorize_view_pipedrive, \
+                        callback_view, AuthenticatePlatformsView
 
 urlpatterns = [
     path('signup/', SignupView.as_view(), name='signup'),
-    # path('oauth/authorization-platforms/<str:tenant>', authorize_view, name='authorize_view'),
-    path('oauth/authorize/<str:tenant>', authorize_view, name='authorize'),
-    path('callback/', callback_view, name='callback'),
-    path('oauth/success/<str:tenant>', oauth_success, name="oauth_success"),
-    path('oauth/error/<str:tenant>', oauth_error, name="oauth_error"),
+    path('authenticate-platforms/<str:tenant>', AuthenticatePlatformsView.as_view(), name='authenticate_platforms'),
+    path('oauth/authorize-pipedrive/<str:tenant>', authorize_view_pipedrive, name='authorize_pipedrive'),
+    path('oauth/authorize-calendly/<str:tenant>', authorize_view_calendly, name='authorize_calendly'),
+    path('callback/', callback_view, name='callback')
 ]
 

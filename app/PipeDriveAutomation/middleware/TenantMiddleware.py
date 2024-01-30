@@ -5,19 +5,22 @@ from django.http import HttpResponseForbidden
 
 class CustomTenantMainMiddleware(TenantMainMiddleware):
     def hostname_from_request(self, request):
-        tenant_identifier = request.path.split('/')[-1]
+        print(f"PATH: {request.path}")
+        tenant_identifier = list(filter(lambda x: x != '', request.path.strip().split('/')))
+        tenant_identifier = tenant_identifier[-1]
         print(f"tenant_identifier: {tenant_identifier}")
         return tenant_identifier
 
     def process_request(self, request):
 
-        print(request.path)
         is_callback_request = request.path.endswith('/callback/')
         is_signup_request = request.path.endswith('/signup/')
 
         if not is_callback_request and not is_signup_request and not request.path.endswith('/favicon.ico'):
             try:
                 tenant_identifier = self.hostname_from_request(request)
+                print(f"Tenant identifier3: {tenant_identifier}")
+                print(f"model: {get_tenant_model().objects.get(schema_name=tenant_identifier)}")
                 tenant = get_tenant_model().objects.get(schema_name=tenant_identifier)
                 print(f"tenant: {tenant}")
                 connection.set_tenant(tenant)  # Set the current tenant for the database connection
