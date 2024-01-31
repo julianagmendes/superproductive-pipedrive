@@ -5,19 +5,17 @@ import secrets
 from django.conf import settings
 from urllib.parse import urlparse
 from apps.core.models import PlatformIntegration
+from django.db import transaction
 
-def get_authorization_tokens(request):
+def get_authorization_tokens(request, platform_settings):
     authorization_code = request.GET.get('code')
-    token_url = 'https://api.pipedrive.com/oauth/token'
-    client_id = settings.PIPEDRIVE_OAUTH_SETTINGS['client_id']
-    client_secret = settings.PIPEDRIVE_OAUTH_SETTINGS['client_secret']
-    redirect_uri = settings.PIPEDRIVE_OAUTH_SETTINGS['redirect_uri']
+    token_url = platform_settings['token_url']
     
     data = {
         'code': authorization_code,
-        'client_id': client_id,
-        'client_secret': client_secret,
-        'redirect_uri': redirect_uri,
+        'client_id': platform_settings['client_id'],
+        'client_secret': platform_settings['client_secret'],
+        'redirect_uri': platform_settings['redirect_uri'],
         'grant_type': 'authorization_code',
     }
     
@@ -28,18 +26,53 @@ def get_authorization_tokens(request):
     else:
         print(f"Error: {response.text}")
         return False
-    
 
-def renew_token():
-    # Load token information from the JSON file
-    with open('apps/core/pipedrive_access_boacodes.json', 'r') as file:
-        token_info = json.load(file)
+def save_authentication_info(response, platform):
+    try:
+        # Assuming response content is JSON, extract data
+        response_data = json.loads(response.content)
+
+        parsed_url = urlparse(response_data['api_domain'])
+        subdomain = parsed_url.netloc.split('.')[0]
+
+        with transaction.atomic():
+            integration, created = PlatformIntegration.objects.get_or_create(
+                platform=platform,
+                defaults={
+                    'is_authenticated': True,
+                    'domain': subdomain,
+                    'scopes': response_data['scope'],
+                    'access_token': response_data['access_token'],
+                    'refresh_token': response_data['refresh_token'],
+                }
+            )
+
+            if created:
+                print("Saved authentication info")
+            else:
+                print(f"Platform {platform} already exists. Updating...")
+                integration.is_authenticated = True
+                integration.domain = subdomain
+                integration.scopes = response_data['scope']
+                integration.access_token = response_data['access_token']
+                integration.refresh_token = response_data['refresh_token']
+                integration.save()
+
+            return True
+    except Exception as e:
+        print(f"Error saving authentication info: {e}")
+        return False
+
+
+
+def renew_token(platform, platform_settings):
+    refresh_token = get_refresh_token_db(platform)
 
     # Use the refresh token to obtain a new access token
-    refresh_token = token_info.get('refresh_token')
-    client_id = settings.PIPEDRIVE_OAUTH_SETTINGS['client_id']
-    client_secret = settings.PIPEDRIVE_OAUTH_SETTINGS['client_secret']
-    token_url = 'https://api.pipedrive.com/oauth/token'
+    refresh_token = refresh_token
+    client_id = platform_settings['client_id']
+    client_secret = platform_settings['client_secret']
+    token_url = platform_settings['token_url']
 
     token_params = {
         'grant_type': 'refresh_token',
@@ -51,12 +84,25 @@ def renew_token():
     response = requests.post(token_url, data=token_params)
 
     if response.status_code == 200:
-        new_token_info = response.json()
         # Update the token information in the JSON file
-        with open('apps/core/pipedrive_access_boacodes.json', 'w') as file:
-            json.dump(new_token_info, file)
+        save_authentication_info(response,'pipedrive')
         print("Token renewed successfully")
     else:
         print("Failed to renew token")
 
 
+def get_access_token_db(platform):
+    try:
+        integration = PlatformIntegration.objects.get(platform=platform)
+        return integration.access_token
+    except Exception as e:
+        print(f"Error getting access token from database: {e}")
+        return None
+    
+def get_refresh_token_db(platform):
+    try:
+        integration = PlatformIntegration.objects.get(platform=platform)
+        return integration.refresh_token
+    except Exception as e:
+        print(f"Error getting refresh token from database: {e}")
+        return None

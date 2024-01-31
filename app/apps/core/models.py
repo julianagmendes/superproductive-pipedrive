@@ -7,5 +7,7 @@ class PlatformIntegration(models.Model):
     is_authenticated = models.BooleanField(default=False)
     domain = models.CharField(max_length=255, null=True, blank=True)
     scopes = models.CharField(max_length=255, null=True, blank=True)
+    access_token = EncryptedCharField(max_length=255, null=True, blank=True)
+    refresh_token = EncryptedCharField(max_length=255, null=True, blank=True)
 
 

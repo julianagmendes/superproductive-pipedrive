@@ -40,33 +40,3 @@ def create_tenant(company, company_type, company_size, comm_platform, pm_platfor
         # Log the exception and traceback
         # TODO
         raise e
-
-def save_authentication_info(response, tenant):
-    try:
-        with open('apps/core/pipedrive_access_boacodes.json', 'w') as f:
-            json.dump(response, f)
-
-        parsed_url = urlparse(response['api_domain'])
-        subdomain = parsed_url.netloc.split('.')[0]
-
-        with transaction.atomic():
-
-            if not PlatformIntegration.objects.filter(platform='pipedrive').exists():
-                new_pipedrive_integration = PlatformIntegration(
-                        platform='pipedrive',
-                        is_authenticated=True,
-                        domain=subdomain,
-                        scopes=response['scope']
-                    )
-                new_pipedrive_integration.save()
-                print("Saved authentication info")
-            else:
-                pass
-                # TODO: Update the existing record
-            return True
-    except Exception as e:
-        # TODO
-        # Handle the exception, log the error, or raise a more specific exception
-        print(f"Error saving authentication info: {e}")
-        return False
-        

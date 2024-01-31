@@ -6,8 +6,7 @@ from requests_oauthlib import OAuth2Session
 from django.conf import settings
 from django.db import connection
 from .utils.authentication_tools import  get_authorization_tokens
-from apps.pipedrive.tasks.webhook_tasks import create_pipedrive_webhook
-from apps.core.tasks import save_authentication_info
+from apps.core.utils.authentication_tools import save_authentication_info
 from django.views import View
 from apps.core.tasks import create_tenant
 
@@ -52,6 +51,7 @@ def authorize_view_pipedrive(request, tenant):
         settings.PIPEDRIVE_OAUTH_SETTINGS['authorization_url']
     )
     request.session['oauth_state'] = state
+    request.session['platform'] = 'pipedrive'
     return redirect(authorization_url)
 
 def authorize_view_calendly(request, tenant):
@@ -69,20 +69,25 @@ def authorize_view_calendly(request, tenant):
 
 
 def callback_view(request):
-    # Ensure 'state' parameter is present in the callback request
     state_param = request.GET.get('state')
     session_state = request.session.get('oauth_state')
-
-    print(f"state_param: {state_param}")
-    print(f"session_state: {session_state}")
+    print(f"REQUEST GET: {request.session.get('platform')}")
 
     if state_param is None or state_param != session_state:
         return HttpResponseForbidden("Invalid 'state' parameter")
-
-    # Attempt to obtain authorization tokens
-    response = get_authorization_tokens(request)
-
-    print(f"Autorization tokens: {response}")
+    
+    if 'pipedrive' in request.session.get('platform'):
+        platform = 'pipedrive'
+        response = get_authorization_tokens(request, settings.PIPEDRIVE_OAUTH_SETTINGS)
+        
+    elif 'other_platform' in request.GET:
+        platform = 'other_platform'
+        # Handle other platform authentication
+        # TODO
+        pass
+    else:
+        platform = None
+        return HttpResponseForbidden("Unknown platform")
 
     if response is False:
         return HttpResponse("Token exchange failed")
@@ -90,9 +95,9 @@ def callback_view(request):
     # Process successful token exchange
     tenant = connection.schema_name  # Make sure to define 'connection' appropriately
     print(f"tenant: {tenant}")
-
+    
     # Save authentication information
-    response = save_authentication_info(response, tenant)
+    response = save_authentication_info(response, platform)
     if response is False:
         return HttpResponse("Failed to save authentication information")
     
