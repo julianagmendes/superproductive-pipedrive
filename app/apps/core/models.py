@@ -9,5 +9,3 @@ class PlatformIntegration(models.Model):
     scopes = models.CharField(max_length=255, null=True, blank=True)
     access_token = EncryptedCharField(max_length=255, null=True, blank=True)
     refresh_token = EncryptedCharField(max_length=255, null=True, blank=True)
-
-

@@ -1,0 +1,7 @@
+<!-- get_data.html -->
+
+<form id="email-template-form" hx-post="{% url 'update_data' button_name=button_data.name tenant=tenant %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+</form>

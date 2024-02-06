@@ -2,11 +2,12 @@ from django.db import models
 from apps.core.models import PlatformIntegration
 from encrypted_model_fields.fields import EncryptedCharField
 
-class PipedriveWebhook(models.Model):
+class Webhook(models.Model):
     '''
         Stores each webhook created for a tenant
     '''
-    id = models.CharField(primary_key = True, max_length=255)
+    name = models.CharField(primary_key = True, max_length=255)
+    id = models.CharField(max_length=255)
     company_id = models.CharField(max_length=255)
     integration = models.ForeignKey(PlatformIntegration, on_delete=models.CASCADE)
     password  = EncryptedCharField(max_length=255, default='')

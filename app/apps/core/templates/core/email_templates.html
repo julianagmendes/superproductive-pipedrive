@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern UI Example</title>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/htmx.org@1.7.0/dist/htmx.min.js" defer></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .editable-field {
+            display: none;
+        }
+    </style>
+</head>
+<!-- YourApp/templates/core/main_template.html -->
+
+<body x-data="{ openField: null }">
+    <div class="button-container">
+        {% for button_data in button_data_objects %}
+        <button x-on:click="openField = '{{ button_data.name }}'; fetchData('{{ button_data.name }}')">View {{ button_data.name }}</button>
+            <div x-show="openField === '{{ button_data.name }}'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform scale-90" x-transition:enter-end="opacity-100 transform scale-100" x-transition:leave="transition ease-in duration-300" x-transition:leave-start="opacity-100 transform scale-100" x-transition:leave-end="opacity-0 transform scale-90">
+                <div id="email-template-form-container" hx-swap="outerHTML"></div>
+                <button x-on:click="openField = null">Cancel</button>
+            </div>
+        {% endfor %}
+    </div>
+    <script>
+        function fetchData(buttonName) {
+            console.log('buttonName:', buttonName);  // Add this line for debugging
+    
+            const url = `{% url 'get_data' button_name=buttonName tenant=tenant %}`;
+            const container = document.getElementById('email-template-form-container');
+    
+            fetch(url)
+                .then(response => response.text())
+                .then(data => {
+                    container.innerHTML = data;
+                    Alpine.start();  // Reinitialize Alpine.js on the updated content
+                });
+        }
+    </script>
+    
+</body>
+
+</html>

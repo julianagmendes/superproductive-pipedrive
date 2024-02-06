@@ -1,5 +1,3 @@
-<!-- FILEPATH: /c:/Users/j_men/Documents/Boa Codes/superproductive-pipedrive/app/apps/core/templates/core/authentication_platforms.html -->
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -34,13 +32,42 @@
         .button:hover {
             background-color: #0056b3;
         }
+
+        /* New styles for animation */
+        .header {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            overflow: hidden; /* Hide overflow */
+            white-space: nowrap; /* Prevent line break */
+        }
+
+        .gradient-text {
+            background-image: linear-gradient(to right, rgba(70, 130, 180, 1), rgba(255, 112, 0, .9)); /* Create gradient effect */
+            display: inline-block;
+            animation: revealText 1.7s forwards; /* Define animation */
+            background-size: 200% auto; /* Extend background size */
+            color: transparent; /* Set text color to transparent */
+            -webkit-background-clip: text; /* Apply background clip to text */
+            background-clip: text; /* Apply background clip to text */
+        }
+
+        @keyframes revealText {
+            from { background-position: 100%; } /* Start from the right */
+            to { background-position: 0; } /* Move to the left */
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <div class="header">
+            Hello <span class="gradient-text">{{ tenant }}</span>!
+            <br>
+            <br>
+        </div>
         <h1 class="title">Authenticate Apps for SuperFunnel CRM</h1>
         <a href="{% url 'authorize_pipedrive' tenant=tenant %}" class="button">Pipedrive</a>
-        <a href="{% url 'authorize_calendly' tenant=tenant %}" class="button">Calendly</a>
+        <a href="{% url 'authorize_google_drive' tenant=tenant %}" class="button">Google Drive</a>
     </div>
 </body>
 </html>

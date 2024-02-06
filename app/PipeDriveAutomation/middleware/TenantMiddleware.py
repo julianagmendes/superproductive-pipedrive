@@ -2,6 +2,9 @@ from django_tenants.middleware.main import TenantMainMiddleware
 from django_tenants.utils import get_tenant_model
 from django.db import connection
 from django.http import HttpResponseForbidden
+import threading
+
+thread_local = threading.local()
 
 class CustomTenantMainMiddleware(TenantMainMiddleware):
     def hostname_from_request(self, request):
@@ -13,6 +16,8 @@ class CustomTenantMainMiddleware(TenantMainMiddleware):
 
     def process_request(self, request):
 
+        print(f"PATH 2: {request.path}")
+
         is_callback_request = request.path.endswith('/callback/')
         is_signup_request = request.path.endswith('/signup/')
 
@@ -23,10 +28,13 @@ class CustomTenantMainMiddleware(TenantMainMiddleware):
                 print(f"model: {get_tenant_model().objects.get(schema_name=tenant_identifier)}")
                 tenant = get_tenant_model().objects.get(schema_name=tenant_identifier)
                 print(f"tenant: {tenant}")
-                connection.set_tenant(tenant)  # Set the current tenant for the database connection
+                
+                            # Use thread-local storage to store the current tenant
+                thread_local.tenant = tenant
 
-                # Set the tenant in the request for easy access in views
-                request.tenant = tenant
+                connection.set_tenant(tenant)  # Set the current tenant for the database connection
+                request.tenant = tenant  # Set the tenant in the request for easy access in views
+
 
             except get_tenant_model().DoesNotExist:
                 return HttpResponseForbidden("Invalid tenant identifier")

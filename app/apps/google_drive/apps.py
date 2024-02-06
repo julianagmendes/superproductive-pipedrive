@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class IntegrationsConfig(AppConfig):
+class GoogleDriveConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'apps.integrations'
+    name = 'apps.google_drive'

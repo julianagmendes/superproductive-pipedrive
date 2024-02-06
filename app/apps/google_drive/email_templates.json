@@ -1,0 +1,14 @@
+{
+    "proposal-email-template": {
+        "subject": "Proposal for {{company}}", 
+        "body": "Hi,\n\nI hope you're doing well. I'm writing to you today to propose a partnership between our companies. I believe that we can achieve great things together, and I'm excited to discuss the details with you.\n\nI've attached a detailed proposal for your review. Please let me know if you have any questions or if you would like to schedule a meeting to discuss this further.\n\nI'm looking forward to the opportunity to work together.\n\nBest regards,\n"
+        }, 
+    "agreement-email-template": {
+        "subject": "Agreement for {{company}}", 
+        "body": "Hi,\n\nI hope this email finds you well. I'm writing to you today to propose a partnership agreement between our companies. I believe that this agreement will benefit both of our organizations, and I'm excited to move forward with this partnership.\n\nI've attached a draft of the agreement for your review. Please let me know if you have any questions or if you would like to schedule a meeting to discuss this further.\n\nI'm looking forward to finalizing this agreement and working together.\n\nBest regards,\n"
+        }, 
+    "invoice-email-template": {
+        "subject": "Invoice for {{company}}",
+        "body": "Hi,\n\nI hope you're doing well. I'm writing to you today to send you an invoice for the services we provided to your company. Please find the attached invoice for your review and payment.\n\nIf you have any questions or concerns about the invoice, please don't hesitate to contact me.\n\nThank you for your business, and I look forward to working with you again in the future.\n\nBest regards,\n"
+        }
+    }

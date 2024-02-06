@@ -15,38 +15,18 @@ CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = "Lax"
 # CORS_ORIGIN_ALLOW_ALL = True
-
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 if ENVIRONMENT == 'local':
-
     DEBUG = True
-    SECRET_KEY = os.getenv('SECRET_KEY')
+    DOMAIN = 'https://42c9-2603-6081-1703-485c-c86d-93b3-2750-dac9.ngrok-free.app'
     FIELD_ENCRYPTION_KEY = 'u15DQDG0wd6tQBrhGiimvk1YFUxqPrk_ufwXIoeA6lg='
     ALLOWED_HOSTS = ['*']
 
-    LOGGING = {
-            'version': 1,
-            'disable_existing_loggers': False,
-            'handlers': {
-                'console': {
-                    'class': 'logging.StreamHandler',
-                },
-            },
-            'root': {
-                'handlers': ['console'],
-                'level': 'INFO',
-            },
-        }
-
-
 else:
-    django_secrets = get_secret_dict(f'{ENVIRONMENT}/django_secrets')
-    DEBUG = django_secrets['DEBUG']
-    SECRET_KEY = django_secrets['SECRET_KEY']
-    FIELD_ENCRYPTION_KEY = django_secrets['FIELD_ENCRYPTION_KEY']
-    ALLOWED_HOSTS = []
-    ALLOWED_HOSTS.extend([host.strip() for host in django_secrets['ALLOWED_HOSTS'].split(',')])
-
+    DOMAIN = os.getenv('DOMAIN')
+    ALLOWED_HOSTS = [DOMAIN]
+    FIELD_ENCRYPTION_KEY = os.getenv('FIELD_ENCRYPTION_KEY')
 
 
 SHARED_APPS = [
@@ -54,6 +34,7 @@ SHARED_APPS = [
     'corsheaders',
     'user_management',
     'django_celery_results',
+    'tenant_schemas_celery',
     'encrypted_model_fields',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -67,7 +48,7 @@ SHARED_APPS = [
 TENANT_APPS = [
     'apps.pipedrive',
     'apps.core',
-    'apps.integrations'
+    'apps.google_drive',
 ]
 
 INSTALLED_APPS = list(set(SHARED_APPS + TENANT_APPS))
@@ -108,33 +89,18 @@ WSGI_APPLICATION = 'PipeDriveAutomation.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-if ENVIRONMENT == 'local':
 
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django_tenants.postgresql_backend',
-            'NAME': os.getenv('DB_NAME'),
-            'USER': os.getenv('DB_USER'),
-            'PASSWORD': os.getenv('DB_PASSWORD'),
-            'HOST': os.getenv('DB_HOST'),
-            'PORT': '5432',
-        }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django_tenants.postgresql_backend',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': '5432',
     }
+}
 
-
-else:
-    secret_db_name = f'{ENVIRONMENT}/db/masteruser'
-    db_secrets = get_secret_dict(secret_db_name)
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django_tenants.postgresql_backend',
-            'NAME': db_secrets['DB_NAME'],
-            'USER': db_secrets['DB_USER'],
-            'PASSWORD': db_secrets['DB_PASSWORD'],
-            'HOST': db_secrets['DB_HOST'],
-            'PORT': '5432',
-        }
-    }
 
 DATABASE_ROUTERS = (
     'django_tenants.routers.TenantSyncRouter',
@@ -194,48 +160,35 @@ MEDIA_ROOT = '/vol/web/media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+PIPEDRIVE_OAUTH_SETTINGS = {
+    'client_id': os.getenv('PIPEDRIVE_CLIENT_ID'),
+    'client_secret': os.getenv('PIPEDRIVE_CLIENT_SECRET'),
+    'redirect_uri': f'{DOMAIN}/core/callback/',
+    'authorization_url': 'https://oauth.pipedrive.com/oauth/authorize',
+    'token_url': 'https://oauth.pipedrive.com/oauth/token',
+}
+
+GOOGLE_DRIVE_OAUTH_SETTINGS = {
+    'client_id': os.getenv('GOOGLE_DRIVE_CLIENT_ID'),
+    'client_secret': os.getenv('GOOGLE_DRIVE_CLIENT_SECRET'),
+    'redirect_uri': f'{DOMAIN}/core/callback/',
+    'authorization_url': 'https://accounts.google.com/o/oauth2/v2/auth?prompt=consent&access_type=offline',
+    'token_url': 'https://oauth2.googleapis.com/token',
+}
+
+CSRF_TRUSTED_ORIGINS = [DOMAIN]
 # settings.py
 if ENVIRONMENT == 'local':
 
-    PIPEDRIVE_OAUTH_SETTINGS = {
-        'client_id': os.getenv('PIPEDRIVE_CLIENT_ID'),
-        'client_secret': os.getenv('PIPEDRIVE_CLIENT_SECRET'),
-        'redirect_uri': 'https://42c9-2603-6081-1703-485c-c86d-93b3-2750-dac9.ngrok-free.app/core/callback/',
-        'authorization_url': 'https://oauth.pipedrive.com/oauth/authorize',
-        'token_url': 'https://oauth.pipedrive.com/oauth/token',
-    }
-
-    ASANA_OAUTH_SETTINGS = {
-        'client_id': os.getenv('ASANA_CLIENT_ID'),
-        'client_secret': os.getenv('ASANA_CLIENT_SECRET'),
-        'redirect_uri': os.getenv('ASANA_REDIRECT_URI'),
-        'authorization_url': 'https://app.asana.com/-/oauth_authorize',
-        'token_url': 'https://app.asana.com/-/oauth_token',
-    }
-
-    # CORS_ALLOWED_ORIGINS = [
-    #             "https://0933-98-24-161-221.ngrok-free.app"
-    #         ]
-    CSRF_TRUSTED_ORIGINS = ["https://42c9-2603-6081-1703-485c-c86d-93b3-2750-dac9.ngrok-free.app"]
-
+    BROKER_URL = 'redis://redis:6379/0'
     CELERY_BROKER_URL = 'redis://redis:6379/0'
     CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
 
 else:
-    pipedrive_secrets = get_secret_dict(f'{ENVIRONMENT}/pipedrive_secrets')
-    PIPEDRIVE_OAUTH_SETTINGS = {
-        'client_id': pipedrive_secrets['PIPEDRIVE_CLIENT_ID'],
-        'client_secret': pipedrive_secrets['PIPEDRIVE_CLIENT_SECRET'],
-        'redirect_uri': pipedrive_secrets['PIPEDRIVE_REDIRECT_URI'],
-        'authorization_url': 'https://oauth.pipedrive.com/oauth/authorize',
-        'token_url': 'https://oauth.pipedrive.com/oauth/token',
-    }
-
-    EC2_SECRETS = get_secret_dict(f'{ENVIRONMENT}/celery_secrets')
-    CELERY_BROKER_URL = f"redis://{EC2_SECRETS['HOST_NAME']}:6379/0"
-    CELERY_RESULT_BACKEND = f"redis://{EC2_SECRETS['HOST_NAME']}:6379/0"
+    REDIS_HOST=os.getenv('REDIS_HOST_NAME')
+    CELERY_BROKER_URL = f"redis://{REDIS_HOST}:6379/0"
+    CELERY_RESULT_BACKEND = f"redis://{REDIS_HOST}:6379/0"
     CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP=True
-    REDIS_HOST=EC2_SECRETS['HOST_NAME']
 
 
 # Celery Configuration Options
