@@ -1,24 +1,27 @@
-from django.shortcuts import render, get_object_or_404
-from .forms import SignUpForm
-from django.http import HttpResponse, HttpResponseForbidden, JsonResponse
-from django.shortcuts import redirect, render
-from requests_oauthlib import OAuth2Session
-from django.conf import settings
-from django.db import connection
-from .utils.authentication_tools import  get_authorization_tokens, save_authentication_info
-from .utils.tenant_tools import create_tenant
-from django.views import View
 from celery import chain
 from celery.result import AsyncResult
-from user_management.models import Company
-from apps.google_drive.tasks import create_templates_folder_task, create_email_templates
+
+from django.conf import settings
+from django.db import connection
+from django.http import HttpResponse, HttpResponseForbidden, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views import View
+from django_tenants.utils import schema_context
+from requests_oauthlib import OAuth2Session
+
+from .forms import SignUpForm
+from .models import PlatformIntegration
+from .utils.authentication_tools import get_authorization_tokens, save_authentication_info
+from .utils.tenant_tools import create_tenant
+from apps.google_drive.tasks import create_email_templates, create_templates_folder_task
 from apps.pipedrive.tasks import create_wekbhooks_task
+from user_management.models import Company
 
 class SignupView(View):
     def get(self, request):
         form = SignUpForm()
         return render(request, 'core/signup.html', {'form': form})
-    
+
 
     def post(self, request, *args, **kwargs):
         form = SignUpForm(request.POST)
@@ -36,13 +39,26 @@ class SignupView(View):
             # Continue with your view logic, e.g., redirect the user to an intermediate page
             # return render(request, 'core/signup.html', {'company': company})
             return redirect('authenticate_platforms', tenant=company)
-    
+
         return render(request, 'core/signup.html', {'form': form})
 
 class AuthenticatePlatformsView(View):
     def get(self, request, tenant):
-        tenant = Company.objects.get(schema_name=connection.schema_name).name
-        return render(request, 'core/authenticate_platforms.html', {'tenant': connection.schema_name})
+        tenant_obj = get_object_or_404(Company, schema_name=tenant)
+
+        with schema_context(tenant_obj.schema_name):
+            integrations = PlatformIntegration.objects.all().values('platform', 'is_authenticated')
+            integrations_list = list(integrations)
+
+            print(f"integrations details: {integrations_list}")
+
+        context = {
+            'tenant': tenant_obj.name,
+            'pipedrive_authenticated': any(integration['is_authenticated'] for integration in integrations_list if integration['platform'] == 'pipedrive'),
+            'google_drive_authenticated': any(integration['is_authenticated'] for integration in integrations_list if integration['platform'] == 'google_drive'),
+        }
+
+        return render(request, 'core/authenticate_platforms.html', context)
 
 def authorize_view_pipedrive(request, tenant):
     pipedrive = OAuth2Session(
@@ -87,11 +103,11 @@ def callback_view(request):
 
     if state_param is None or state_param != session_state:
         return HttpResponseForbidden("Invalid 'state' parameter")
-    
+
     if 'pipedrive' in request.session.get('platform'):
         platform = 'pipedrive'
         response = get_authorization_tokens(request, settings.PIPEDRIVE_OAUTH_SETTINGS)
-        
+
     elif 'google-drive' in request.session.get('platform'):
         platform = 'google-drive'
         response = get_authorization_tokens(request, settings.GOOGLE_DRIVE_OAUTH_SETTINGS)
@@ -111,7 +127,7 @@ def callback_view(request):
     response = save_authentication_info(response, platform)
     if response is False:
         return HttpResponse("Failed to save authentication information")
-    
+
     else:
         if platform == 'google-drive':
             workflow = chain(create_templates_folder_task.s(), create_email_templates.s())
@@ -137,7 +153,7 @@ def callback_view(request):
 #     template = get_object_or_404(EmailTemplates, name=button_name)
 #     print(f"template: {template}")
 #     form = EmailTemplateForm(instance=template)
-    
+
 #     return render(request, 'core/get_data.html', {'form': form})
 
 # def update_data(request, button_name, tenant):
