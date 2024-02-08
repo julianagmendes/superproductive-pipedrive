@@ -1,60 +1,83 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SuperFunnel CRM - App Authentication</title>
     <style>
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
+        body {
+            margin: 0;
+            padding: 0;
             font-family: Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(to right, rgba(70, 130, 180, 0.9), rgba(255, 112, 0, 0.7));
+            animation: gradientAnimation 10s infinite linear;
+        }
+
+        @keyframes gradientAnimation {
+            0% {
+                background-position: 0% 50%;
+            }
+            100% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .header {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .gradient-text {
+            background-image: linear-gradient(to right, rgba(70, 130, 180, 1), rgba(255, 112, 0, .9));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
 
         .title {
             font-size: 24px;
             font-weight: bold;
-            margin-bottom: 20px;
+            margin-bottom: 40px;
+            color: #333;
+        }
+
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 20px;
         }
 
         .button {
-            padding: 10px 20px;
+            padding: 15px 30px;
             background-color: #007bff;
             color: #fff;
-            font-size: 16px;
+            font-size: 18px;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            margin-bottom: 10px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
         }
 
         .button:hover {
             background-color: #0056b3;
-        }
-
-        /* New styles for animation */
-        .header {
-            font-size: 28px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            overflow: hidden; /* Hide overflow */
-            white-space: nowrap; /* Prevent line break */
-        }
-
-        .gradient-text {
-            background-image: linear-gradient(to right, rgba(70, 130, 180, 1), rgba(255, 112, 0, .9)); /* Create gradient effect */
-            display: inline-block;
-            animation: revealText 1.7s forwards; /* Define animation */
-            background-size: 200% auto; /* Extend background size */
-            color: transparent; /* Set text color to transparent */
-            -webkit-background-clip: text; /* Apply background clip to text */
-            background-clip: text; /* Apply background clip to text */
-        }
-
-        @keyframes revealText {
-            from { background-position: 100%; } /* Start from the right */
-            to { background-position: 0; } /* Move to the left */
         }
     </style>
 </head>
@@ -62,12 +85,12 @@
     <div class="container">
         <div class="header">
             Hello <span class="gradient-text">{{ tenant }}</span>!
-            <br>
-            <br>
         </div>
         <h1 class="title">Authenticate Apps for SuperFunnel CRM</h1>
-        <a href="{% url 'authorize_pipedrive' tenant=tenant %}" class="button">Pipedrive</a>
-        <a href="{% url 'authorize_google_drive' tenant=tenant %}" class="button">Google Drive</a>
+        <div class="button-container">
+            <a href="{% url 'authorize_pipedrive' tenant=tenant %}" class="button">Pipedrive</a>
+            <a href="{% url 'authorize_google_drive' tenant=tenant %}" class="button">Google Drive</a>
+        </div>
     </div>
 </body>
 </html>

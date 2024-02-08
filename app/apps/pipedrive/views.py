@@ -3,11 +3,12 @@ from django.http import HttpResponse, HttpResponseForbidden, JsonResponse
 import json
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from .utils.api import get_all_webhooks, delete_webhook, get_mailbox_threads
+from .utils.api import get_all_webhooks, delete_webhook
 from .utils.tenant_tools import verify_webhook_credentials
 from apps.core.utils.authentication_tools import get_access_tokens_db, renew_token
 from django.conf import settings
 from .utils.event_filter_tools import get_new_stage_id
+from .utils.event_handlers import email_tamplate_handler
 
 @csrf_exempt
 @require_POST   
@@ -53,7 +54,10 @@ def updated_deal(request, tenant):
             return HttpResponseForbidden()
         
         new_stage_id = get_new_stage_id(data)
-        get_mailbox_threads(get_access_tokens_db('pipedrive').get('access_token'))
+        print(f"New stage id: {new_stage_id}")
+        # get_mailbox_threads(get_access_tokens_db('pipedrive').get('access_token'))
+        if new_stage_id:
+            email_tamplate_handler(data['current']['id'], new_stage_id, tenant)
 
 
         return JsonResponse({'success': True})
@@ -90,6 +94,7 @@ def get_all_webhooks_view(request, tenant):
         response = get_all_webhooks(access_token)
         print(f"response status code: {response.status_code}")
         if response.status_code == 401:
+            print('need to renew token')
             raise Exception("Unauthorized")
     except Exception as e:
         print('need to renew token')

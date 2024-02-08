@@ -68,22 +68,65 @@ def delete_webhook(access_token, webhook_id):
         print(f"Failed to delete webhook. Status code: {response.status_code}, Response: {response.text}")
 
 
-def get_mailbox_threads(access_token):
+def get_deal_details(access_token, deal_id):
     # Pipedrive API endpoint for webhooks
-    api_url = "https://api.pipedrive.com/v1/mailThreads"
+    api_url = f"https://api.pipedrive.com/v1/deals/{deal_id}"
 
     # Headers with authorization using the access token
     headers = {
         "Authorization": f"Bearer {access_token}",
         "Content-Type": "application/json",
     }
-    params = {
-        "folder": "drafts"
+
+    # Make the API request to get all webhooks
+    response = requests.get(api_url, headers=headers)
+    print(f"Deal details: {response.json()}")
+
+    return response
+
+# get products for deal
+        
+def get_deal_products(access_token):
+    # Pipedrive API endpoint for webhooks
+    api_url = "https://api.pipedrive.com/v1/products"
+
+    # Headers with authorization using the access token
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json",
     }
 
     # Make the API request to get all webhooks
-    response = requests.get(api_url, headers=headers, params=params)
-    print(response.text)
-    print(response.json())
+    response = requests.get(api_url, headers=headers)
+    print(f"Products: {response.json()}")
 
     return response
+
+# get the deal details
+
+
+
+
+
+
+
+
+# def get_mailbox_threads(access_token):
+#     # Pipedrive API endpoint for webhooks
+#     api_url = "https://api.pipedrive.com/v1/mailThreads"
+
+#     # Headers with authorization using the access token
+#     headers = {
+#         "Authorization": f"Bearer {access_token}",
+#         "Content-Type": "application/json",
+#     }
+#     params = {
+#         "folder": "drafts"
+#     }
+
+#     # Make the API request to get all webhooks
+#     response = requests.get(api_url, headers=headers, params=params)
+#     print(response.text)
+#     print(response.json())
+
+#     return response

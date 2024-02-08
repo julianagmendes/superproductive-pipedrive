@@ -17,10 +17,7 @@ from apps.pipedrive.tasks import create_wekbhooks_task
 class SignupView(View):
     def get(self, request):
         form = SignUpForm()
-        # Get the company name from the Company model
-        tenant = Company.objects.get(schema_name=connection.schema_name).name
-        print(f"tenant5: {tenant}")
-        return render(request, 'core/signup.html', {'form': form, 'tenant': tenant})
+        return render(request, 'core/signup.html', {'form': form})
     
 
     def post(self, request, *args, **kwargs):
@@ -45,7 +42,7 @@ class SignupView(View):
 class AuthenticatePlatformsView(View):
     def get(self, request, tenant):
         tenant = Company.objects.get(schema_name=connection.schema_name).name
-        return render(request, 'core/authenticate_platforms.html', {'tenant': tenant})
+        return render(request, 'core/authenticate_platforms.html', {'tenant': connection.schema_name})
 
 def authorize_view_pipedrive(request, tenant):
     pipedrive = OAuth2Session(
