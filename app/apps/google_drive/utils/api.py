@@ -81,3 +81,28 @@ def create_file_template(access_token, folder_id, name, content):
     
 
     return JsonResponse({'success': False, 'error': 'Failed to create document'})
+
+def get_file_names(access_token, folder_id):
+
+    # Google Drive API endpoint URL for listing files in a folder
+    list_files_url = f'https://www.googleapis.com/drive/v3/files?q=\'{folder_id}\' in parents'
+
+    # Headers with the access token
+    headers = {
+        'Authorization': f'Bearer {access_token}',
+        'Content-Type': 'application/json',
+    }
+
+    # Make a GET request to list the files
+    response = requests.get(list_files_url, headers=headers)
+
+    if response.status_code == 200:
+        # Parse the response
+        files_data = response.json()
+        file_names = [file['name'] for file in files_data['files']]
+        return file_names
+    elif response.status_code == 401:
+        raise AuthenticationError("Authentication failed")
+
+    return []
+

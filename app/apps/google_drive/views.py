@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from apps.core.utils.authentication_tools import get_access_tokens_db, renew_token
 from django_tenants.utils import get_tenant_model
 from .utils.tenant_tools import save_file_info
-from .utils.api import create_drive_folder, create_file_template, AuthenticationError
+from .utils.api import create_drive_folder, create_file_template, AuthenticationError, get_file_names
 from PipeDriveAutomation.utils import get_secret_dict
 
 def create_folder_view(request, tenant):
@@ -49,9 +49,14 @@ def create_templates_view(request, tenant, folder_id):
     template_info = json.loads(open('apps/google_drive/email_templates.json').read())
     print(f"Template info: {template_info}")
     try:
+        current_files = get_file_names(access_token, folder_id)
+        print(f"Current files: {current_files}")
         for name, content in template_info.items():
+            if name in current_files:
+                print(f"File {name} already exists")
+                continue
             file_id = create_file_template(access_token, folder_id, name, content)
-            save_file_info(file_id, name, folder_id, tenant, content)
+            save_file_info(file_id, name, folder_id, content)
             print(f"File ID: {file_id}")
 
     except AuthenticationError:
