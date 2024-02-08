@@ -19,7 +19,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 if ENVIRONMENT == 'local':
     DEBUG = True
-    DOMAIN = 'https://42c9-2603-6081-1703-485c-c86d-93b3-2750-dac9.ngrok-free.app'
+    DOMAIN = 'https://f527-138-199-40-175.ngrok-free.app'
     FIELD_ENCRYPTION_KEY = 'u15DQDG0wd6tQBrhGiimvk1YFUxqPrk_ufwXIoeA6lg='
     ALLOWED_HOSTS = ['*']
 
