@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,6 +22,7 @@
             0% {
                 background-position: 0% 50%;
             }
+
             100% {
                 background-position: 100% 50%;
             }
@@ -81,16 +83,36 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
             Hello <span class="gradient-text">{{ tenant }}</span>!
         </div>
-        <h1 class="title">Authenticate Apps for SuperFunnel CRM</h1>
+        <h1 class="title">Authenticate Apps</h1>
         <div class="button-container">
-            <a href="{% url 'authorize_pipedrive' tenant=tenant %}" class="button">Pipedrive</a>
-            <a href="{% url 'authorize_google_drive' tenant=tenant %}" class="button">Google Drive</a>
+
+            <div class="auth-section">
+                <a href="{% url 'authorize_pipedrive' tenant=tenant %}" class="button">Authenticate with Pipedrive</a>
+                {% if pipedrive_authenticated %}
+                <span class="status">✅ Authenticated</span>
+                {% else %}
+                <span class="status">❌ Not Authenticated</span>
+                {% endif %}
+            </div>
+
+            <div class="auth-section">
+                <a href="{% url 'authorize_google_drive' tenant=tenant %}" class="button">Authenticate with Google
+                    Drive</a>
+                {% if google_drive_authenticated %}
+                <span class="status">✅ Authenticated</span>
+                {% else %}
+                <span class="status">❌ Not Authenticated</span>
+                {% endif %}
+            </div>
+
         </div>
     </div>
 </body>
+
 </html>
